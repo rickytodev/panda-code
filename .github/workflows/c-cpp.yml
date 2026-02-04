@@ -1,23 +1,37 @@
 name: C/C++ CI
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
 
 jobs:
-  build:
+    build:
+        runs-on: ubuntu-latest
 
-    runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
 
-    steps:
-    - uses: actions/checkout@v4
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+            - name: Install GCC
+              run: sudo apt-get update && sudo apt-get install -y gcc
+
+            - name: Build all exercises
+              run: |
+                mkdir -p build
+                for folder in src/*/; do
+                  exercise=$(basename "$folder")
+                  mkdir -p "build/$exercise"
+                  for cfile in "$folder"*.c; do
+                    if [ -f "$cfile" ]; then
+                      filename=$(basename "$cfile" .c)
+                      echo "Building $exercise/$filename.c..."
+                      gcc "$cfile" -o "build/$exercise/$filename"
+                    fi
+                  done
+                done
+
+            - name: Verify builds
+              run: |
+                echo "Built executables:"
+                find build -type f -executable
