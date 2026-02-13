@@ -4,32 +4,34 @@
 int main()
 {
     char entrada[100];
-    double precio, descuento, precio_final;
-    int i = 0, puntos = 0, valido = 1;
+    double precio, descuento, precio_final, factor = 0.1;
+    int i = 0, puntos = 0, valido = 1, digitos = 0, en_decimal = 0;
 
     printf("Ingrese el precio del producto: ");
     scanf("%99s", entrada);
 
-    if (entrada[0] == '-')
+    if (entrada[i] == '\0')
         valido = 0;
-    else
-    {
-        if (entrada[i] == '\0')
-            valido = 0;
 
-        while (entrada[i] != '\0' && valido)
+    while (entrada[i] != '\0' && valido)
+    {
+        if (entrada[i] == '.')
         {
-            if (entrada[i] == '.')
-            {
-                puntos++;
-                if (puntos > 1)
-                    valido = 0;
-            }
-            else if (!isdigit(entrada[i]))
+            puntos++;
+            if (puntos > 1)
                 valido = 0;
-            i++;
+            if (i == 0 || entrada[i + 1] == '\0')
+                valido = 0;
         }
+        else if (isdigit(entrada[i]))
+            digitos++;
+        else
+            valido = 0;
+        i++;
     }
+
+    if (digitos == 0)
+        valido = 0;
 
     if (!valido)
     {
@@ -38,10 +40,8 @@ int main()
     }
 
     precio = 0.0;
-    int en_decimal = 0;
-    double factor = 0.1;
-
-    for (i = 0; entrada[i] != '\0'; i++)
+    i = 0;
+    while (entrada[i] != '\0')
     {
         if (entrada[i] == '.')
             en_decimal = 1;
@@ -52,6 +52,7 @@ int main()
             precio += (entrada[i] - '0') * factor;
             factor *= 0.1;
         }
+        i++;
     }
 
     if (precio > 1000)

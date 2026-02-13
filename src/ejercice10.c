@@ -4,18 +4,10 @@
 int main()
 {
     char entrada[100];
-    int fecha = 0, i = 0, valido = 1, negativo = 0;
+    int fecha = 0, i = 0, valido = 1;
 
     printf("Introduzca el periodo que desea comprobar: ");
     scanf("%99s", entrada);
-
-    if (entrada[0] == '-')
-    {
-        negativo = 1;
-        i = 1;
-    }
-    else if (entrada[0] == '+')
-        i = 1;
 
     if (entrada[i] == '\0')
         valido = 0;
@@ -33,13 +25,12 @@ int main()
         return 1;
     }
 
-    int inicio = (entrada[0] == '-' || entrada[0] == '+') ? 1 : 0;
-
-    for (i = inicio; entrada[i] != '\0'; i++)
+    i = 0;
+    while (entrada[i] != '\0')
+    {
         fecha = fecha * 10 + (entrada[i] - '0');
-
-    if (negativo)
-        fecha = -fecha;
+        i++;
+    }
 
     if ((fecha % 4 == 0 && fecha % 100 != 0) || (fecha % 400 == 0))
         printf("El periodo %d es bisiesto\n", fecha);
